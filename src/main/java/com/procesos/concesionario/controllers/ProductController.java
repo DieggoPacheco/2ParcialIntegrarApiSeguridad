@@ -1,7 +1,9 @@
 package com.procesos.concesionario.controllers;
 
 import com.procesos.concesionario.models.Product;
+import com.procesos.concesionario.models.User;
 import com.procesos.concesionario.services.ProductService;
+import com.procesos.concesionario.services.UserServiceImp;
 import com.procesos.concesionario.utils.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,8 @@ public class ProductController {
     private TokenValidator tokenValidator;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private UserServiceImp userService;
 
     @PostMapping("/products")
     public ResponseEntity createAllProducts(@RequestHeader(value="Authorization") String token) {
@@ -69,6 +73,9 @@ public class ProductController {
             if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
+            User user = userService.getUserById(product.getUser().getId());// Obtener el usuario correspondiente al producto
+            product.setUser(user);// Asignar el usuario al producto
+
             response.put("message","Producto creado correctamente");
             response.put("data",productService.createProduct(product));
             return new ResponseEntity(response, HttpStatus.CREATED);
@@ -104,6 +111,8 @@ public class ProductController {
             if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
+            User user = userService.getUserById(product.getUser().getId());// Obtener el usuario correspondiente al producto
+            product.setUser(user);// Asignar el usuario al producto
             response.put("message", "producto actualizado correctamente");
             response.put("data", productService.updateProduct(id, product));
             return new ResponseEntity(response, HttpStatus.OK);
