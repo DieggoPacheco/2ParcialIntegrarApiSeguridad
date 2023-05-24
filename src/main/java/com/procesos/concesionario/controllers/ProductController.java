@@ -2,7 +2,7 @@ package com.procesos.concesionario.controllers;
 
 import com.procesos.concesionario.models.Product;
 import com.procesos.concesionario.services.ProductService;
-import com.procesos.concesionario.utils.JWTUtil;
+import com.procesos.concesionario.utils.TokenValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class ProductController {
 
     @Autowired
-    private JWTUtil jwtUtil;
+    private TokenValidator tokenValidator;
     @Autowired
     private ProductService productService;
 
@@ -24,7 +24,7 @@ public class ProductController {
     public ResponseEntity createAllProducts(@RequestHeader(value="Authorization") String token) {
         Map response = new HashMap();
         try{
-            if(!validateToken(token)){
+            if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
             response.put("message","Producto consimidos correctamente en la BD");
@@ -42,7 +42,7 @@ public class ProductController {
     public ResponseEntity getAll(@RequestHeader(value="Authorization") String token) {
         Map response = new HashMap();
         try {
-            if(!validateToken(token)){
+            if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
             List<Product> productList = productService.getAll();
@@ -66,7 +66,7 @@ public class ProductController {
     public ResponseEntity createProduct(@RequestBody Product product,@RequestHeader(value="Authorization") String token){
         Map response = new HashMap();
         try{
-            if(!validateToken(token)){
+            if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
             response.put("message","Producto creado correctamente");
@@ -84,7 +84,7 @@ public class ProductController {
     public ResponseEntity getProduc(@PathVariable(name = "id")Long id,@RequestHeader(value="Authorization") String token){
         Map response = new HashMap();
         try{
-            if(!validateToken(token)){
+            if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
             response.put("mensaje", "se encontro el producto");
@@ -101,7 +101,7 @@ public class ProductController {
     public ResponseEntity updateProduct(@PathVariable(name = "id") Long id, @RequestBody Product product,@RequestHeader(value="Authorization") String token){
         Map response = new HashMap();
         try{
-            if(!validateToken(token)){
+            if(!tokenValidator.validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
             response.put("message", "producto actualizado correctamente");
@@ -113,16 +113,4 @@ public class ProductController {
             return new ResponseEntity(response,HttpStatus.NOT_FOUND);
         }
     }
-
-    private Boolean validateToken(String token){
-        try{
-            if(jwtUtil.getKey(token) != null){
-                return true;
-            }
-            return  false;
-        }catch (Exception e){
-            return  false;
-        }
-    }
-
 }
