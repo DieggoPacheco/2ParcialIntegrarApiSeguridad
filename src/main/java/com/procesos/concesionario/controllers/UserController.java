@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,8 +44,13 @@ public class UserController {
     @GetMapping(value = "")
     public ResponseEntity getAllUser (){
         try{
-            apiResponse = new ApiResponse(Constants.REGISTERS_FOUND, userService.allUser());
-            return new ResponseEntity(apiResponse, HttpStatus.OK);
+            List<User> userList = userService.allUser();
+            if (!userList.isEmpty()) {
+                apiResponse = new ApiResponse(Constants.REGISTERS_FOUND, userList);
+            } else {
+                apiResponse = new ApiResponse(Constants.REGISTERS_NOT_FOUND, null);
+            }
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
         }catch(Exception e){
             apiResponse = new ApiResponse(Constants.REGISTERS_NOT_FOUND, e.getMessage());
             return new ResponseEntity(apiResponse, HttpStatus.BAD_REQUEST);
