@@ -27,6 +27,7 @@ public class ProductController {
             if(!validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
+            
             response.put("message","Producto consimidos correctamente en la BD");
             response.put("data",productService.createAllProducts());
             return new ResponseEntity(response, HttpStatus.CREATED);
@@ -37,7 +38,6 @@ public class ProductController {
         }
 
     }
-
     @GetMapping(value = "/products")
     public ResponseEntity getAll(@RequestHeader(value="Authorization") String token) {
         Map response = new HashMap();
@@ -66,6 +66,7 @@ public class ProductController {
     public ResponseEntity createProduct(@RequestBody Product product,@RequestHeader(value="Authorization") String token){
         Map response = new HashMap();
         try{
+            
             if(!validateToken(token)){
                 return new ResponseEntity("token invalido", HttpStatus.UNAUTHORIZED);
             }
@@ -96,7 +97,6 @@ public class ProductController {
             return new ResponseEntity(response,HttpStatus.NOT_FOUND);
         }
     }
-
     @PutMapping(value = "/products/{id}")
     public ResponseEntity updateProduct(@PathVariable(name = "id") Long id, @RequestBody Product product,@RequestHeader(value="Authorization") String token){
         Map response = new HashMap();
